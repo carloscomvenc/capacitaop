@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CapacitaOp — Plataforma de Capacitación</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;color:#1a1a1a;background:#f5f5f3;min-height:100vh}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #e5e5e5;background:#fff;position:sticky;top:0;z-index:10}
+.logo{font-weight:600;font-size:17px;color:#185FA5}
+.tabs{display:flex;gap:4px}
+.tab-btn{padding:6px 14px;border:none;background:transparent;cursor:pointer;border-radius:8px;font-size:14px;color:#666}
+.tab-btn.active{background:#f0f0ee;color:#1a1a1a;font-weight:500}
+.tab-btn:hover:not(.active){background:#f0f0ee}
+.user-info{display:flex;align-items:center;gap:8px;font-size:13px}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;background:#B5D4F4;color:#0C447C;overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.content{flex:1;padding:20px;background:#f5f5f3}
+.section{display:none}
+.section.visible{display:block}
+
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f5f3;padding:20px}
+.login-card{background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:40px;text-align:center;max-width:380px;width:100%}
+.login-logo{font-size:32px;font-weight:700;color:#185FA5;margin-bottom:6px}
+.login-sub{font-size:14px;color:#666;margin-bottom:28px;line-height:1.5}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 16px;border:1px solid #e5e5e5;border-radius:10px;background:#fff;cursor:pointer;font-size:14px;font-family:inherit;color:#1a1a1a;transition:background 0.2s}
+.google-btn:hover{background:#f5f5f5}
+.login-footer{font-size:11px;color:#999;margin-top:16px}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:#f0f0ee;border-radius:10px;padding:14px 16px}
+.stat-label{font-size:12px;color:#666;margin-bottom:4px}
+.stat-value{font-size:26px;font-weight:600}
+.s-blue{color:#185FA5}.s-teal{color:#0F6E56}.s-amber{color:#854F0B}.s-green{color:#3B6D11}
+
+.panel-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:700px){.panel-grid{grid-template-columns:1fr 1fr}}
+.card{background:#fff;border-radius:14px;border:1px solid #e5e5e5;padding:16px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.btn{padding:7px 14px;border-radius:8px;border:1px solid #e5e5e5;background:transparent;cursor:pointer;font-size:13px;font-family:inherit;color:#1a1a1a;transition:background 0.2s}
+.btn:hover{background:#f0f0ee}
+.btn-primary{background:#185FA5;color:#fff;border-color:#185FA5}
+.btn-primary:hover{background:#0C447C}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-danger{background:#A32D2D;color:#fff;border-color:#A32D2D}
+.btn-danger:hover{background:#791F1F}
+
+.course-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0ee}
+.course-item:last-child{border-bottom:none}
+.course-thumb{width:42px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.thumb-blue{background:#B5D4F4}.thumb-teal{background:#9FE1CB}.thumb-amber{background:#FAC775}.thumb-coral{background:#F5C4B3}.thumb-purple{background:#CECBF6}
+.course-info{flex:1;min-width:0}
+.course-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.course-tags{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500}
+.tag-vid{background:#B5D4F4;color:#0C447C}.tag-img{background:#9FE1CB;color:#085041}.tag-aud{background:#FAC775;color:#633806}.tag-txt{background:#CECBF6;color:#3C3489}
+
+.op-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0ee;cursor:pointer;border-radius:8px;transition:background 0.15s}
+.op-row:last-child{border-bottom:none}
+.op-row:hover{background:#f5f5f5;padding-left:8px;padding-right:8px}
+.op-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.op-info{flex:1;min-width:0}
+.op-name{font-size:13px;font-weight:500}
+.op-meta{font-size:11px;color:#888}
+.prog-bar{height:5px;background:#f0f0ee;border-radius:3px;width:70px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:5px;flex-shrink:0}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.4s}
+.fill-green{background:#1D9E75}.fill-amber{background:#BA7517}.fill-red{background:#E24B4A}
+.pct-txt{font-size:11px;color:#888;white-space:nowrap}
+
+.badge{font-size:11px;padding:3px 8px;border-radius:8px;font-weight:500;white-space:nowrap}
+.badge-done{background:#C0DD97;color:#27500A}.badge-pend{background:#FAC775;color:#633806}.badge-none{background:#e5e5e5;color:#555}
+
+.drive-status{display:flex;align-items:center;gap:6px;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:12px}
+.drive-ok{background:#EAF3DE;color:#27500A}.drive-err{background:#FCEBEB;color:#791F1F}.drive-loading{background:#E6F1FB;color:#185FA5}
+.drive-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:12px;color:#666;font-weight:500}
+.field input,.field select,.field textarea{padding:9px 12px;border-radius:8px;border:1px solid #e5e5e5;background:#fff;color:#1a1a1a;font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#185FA5}
+.field textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.media-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+.media-btn{padding:10px 4px;border-radius:8px;border:1px solid #e5e5e5;background:#fff;cursor:pointer;text-align:center;font-size:11px;color:#666;font-family:inherit;transition:all 0.15s}
+.media-btn.sel{border-color:#185FA5;background:#E6F1FB;color:#185FA5;font-weight:600}
+.media-icon{font-size:20px;display:block;margin-bottom:3px}
+
+.drop-zone{border:2px dashed #e5e5e5;border-radius:12px;padding:22px;text-align:center;cursor:pointer;background:#f9f9f9;transition:all 0.2s}
+.drop-zone:hover,.drop-zone.drag{border-color:#185FA5;background:#E6F1FB}
+.drop-zone input[type=file]{display:none}
+.drop-icon{font-size:28px;margin-bottom:8px}
+.drop-text{font-size:13px;color:#555}
+.drop-sub{font-size:11px;color:#888;margin-top:4px}
+
+.file-preview{background:#f0f0ee;border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px}
+.file-icon{font-size:22px;flex-shrink:0}
+.file-info{flex:1;min-width:0}
+.file-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-size{font-size:11px;color:#888}
+.file-remove{background:none;border:none;cursor:pointer;color:#888;font-size:18px;padding:0 4px;line-height:1}
+
+.prog-upload{margin-top:8px}
+.prog-upload-bar{height:5px;background:#e5e5e5;border-radius:3px;overflow:hidden;margin-top:5px}
+.prog-upload-fill{height:100%;background:#185FA5;border-radius:3px;transition:width 0.15s}
+
+.op-course-card{background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s}
+.op-course-card:hover{border-color:#378ADD}
+.op-course-card.done{border-left:4px solid #1D9E75;padding-left:11px}
+.op-course-card.inprog{border-left:4px solid #BA7517;padding-left:11px}
+.lesson-list{margin-top:10px;display:none}
+.lesson-list.open{display:block}
+.lesson-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px;background:#f5f5f5;cursor:pointer;flex-wrap:wrap}
+.lesson-item:hover{background:#eee}
+.lesson-chk{width:18px;height:18px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700}
+.lesson-chk.done{background:#1D9E75;border-color:#1D9E75;color:#fff}
+
+.prog-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.prog-stat{text-align:center;padding:12px 8px;background:#f0f0ee;border-radius:10px}
+.prog-num{font-size:22px;font-weight:700}
+.prog-lbl{font-size:11px;color:#888;margin-top:2px}
+
+.sheet-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#185FA5;text-decoration:none;padding:4px 10px;border-radius:8px;border:1px solid #B5D4F4;background:#E6F1FB;font-weight:500}
+.sheet-link:hover{background:#B5D4F4}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;border:1px solid #e5e5e5;padding:24px;width:100%;max-width:480px;margin:auto}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:#888;line-height:1;padding:0}
+
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;display:none;z-index:200;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.notif.show{display:block}
+.notif.err{background:#A32D2D}
+
+.completion-wrap{overflow-x:auto}
+.completion-table{width:100%;font-size:12px;border-collapse:collapse;min-width:300px}
+.completion-table th{text-align:left;padding:6px 8px;color:#888;font-weight:500;border-bottom:1px solid #e5e5e5}
+.completion-table th.center{text-align:center}
+.completion-table td{padding:7px 8px;border-bottom:1px solid #f0f0ee}
+.completion-table td.center{text-align:center}
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">CapacitaOp</div>
+    <div class="login-sub">Plataforma de capacitación para operadores de <strong>comvenc.com</strong></div>
+    <button class="google-btn" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Entrar con Google (@comvenc.com)
+    </button>
+    <div class="login-footer">Los archivos se guardan en tu Google Drive corporativo</div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
+  <div class="topbar">
+    <div class="logo">CapacitaOp</div>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-admin" onclick="setView('admin')">Admin</button>
+      <button class="tab-btn" id="tab-operator" onclick="setView('operator')">Operador</button>
+    </div>
+    <div class="user-info">
+      <div class="avatar" id="top-avatar"><span id="top-initials">--</span></div>
+      <span id="top-name" style="font-size:13px;color:#666;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <button class="btn btn-sm" onclick="signOut()">Salir</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section visible" id="sec-admin">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Operadores</div><div class="stat-value s-blue" id="st-ops">0</div></div>
+        <div class="stat-card"><div class="stat-label">Cursos</div><div class="stat-value s-teal" id="st-cur">0</div></div>
+        <div class="stat-card"><div class="stat-label">Completados</div><div class="stat-value s-green" id="st-done">0</div></div>
+        <div class="stat-card"><div class="stat-label">Pendientes</div><div class="stat-value s-amber" id="st-pend">0</div></div>
+      </div>
+      <div class="panel-grid">
+        <div class="card">
+          <div class="card-title">
+            <span>Cursos en Drive</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-sm" onclick="loadCourses()">↻ Actualizar</button>
+              <button class="btn btn-primary btn-sm" onclick="openUpload()">+ Nuevo curso</button>
+            </div>
+          </div>
+          <div id="drive-status" class="drive-status drive-loading"><span class="drive-dot"></span><span id="drive-status-txt">Conectando...</span></div>
+          <div id="admin-courses"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span>Progreso operadores</span>
+            <button class="btn btn-sm" onclick="openAddOp()">+ Agregar</button>
+          </div>
+          <div id="admin-ops"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px" class="card">
+        <div class="card-title">
+          <span>Reporte de completados</span>
+          <a id="sheets-link" class="sheet-link" href="#" target="_blank" style="display:none">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Ver en Sheets
+          </a>
+        </div>
+        <div id="completion-report"></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-operator">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:16px;font-weight:600">Mis capacitaciones</div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-sm" id="f-all" onclick="filterOp('all')">Todos</button>
+          <button class="btn btn-sm" id="f-pend" onclick="filterOp('pend')">Pendientes</button>
+          <button class="btn btn-sm" id="f-done" onclick="filterOp('done')">Completados</button>
+        </div>
+      </div>
+      <div class="prog-summary">
+        <div class="prog-stat"><div class="prog-num s-teal" id="op-done-c">0</div><div class="prog-lbl">Completados</div></div>
+        <div class="prog-stat"><div class="prog-num s-amber" id="op-pend-c">0</div><div class="prog-lbl">Pendientes</div></div>
+        <div class="prog-stat"><div class="prog-num s-blue" id="op-pct-c">0%</div><div class="prog-lbl">Avance</div></div>
+      </div>
+      <div id="op-courses"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nuevo curso -->
+<div class="modal-overlay" id="upload-modal">
+  <div class="modal">
+    <div class="modal-title">Nuevo curso <button class="modal-close" onclick="closeModal('upload-modal')">✕</button></div>
+    <div class="field"><label>Nombre del curso *</label><input type="text" id="f-name" placeholder="Ej. Seguridad en planta"></div>
+    <div class="field"><label>Descripción</label><textarea id="f-desc" placeholder="Describe brevemente el contenido..."></textarea></div>
+    <div class="form-row">
+      <div class="field"><label>Asignar a</label><select id="f-assign"><option value="all">Todos los operadores</option></select></div>
+      <div class="field"><label>Fecha límite</label><input type="date" id="f-date"></div>
+    </div>
+    <div class="field">
+      <label>Tipo de contenido</label>
+      <div class="media-grid">
+        <button class="media-btn sel" id="mt-vid" onclick="selMedia('vid')"><span class="media-icon">🎬</span>Video</button>
+        <button class="media-btn" id="mt-img" onclick="selMedia('img')"><span class="media-icon">🖼</span>Imagen</button>
+        <button class="media-btn" id="mt-aud" onclick="selMedia('aud')"><span class="media-icon">🎵</span>Audio</button>
+        <button class="media-btn" id="mt-txt" onclick="selMedia('txt')"><span class="media-icon">📝</span>Mensaje</button>
+      </div>
+    </div>
+    <div id="txt-area-wrap" style="display:none" class="field">
+      <label>Mensaje / instrucciones</label>
+      <textarea id="f-message" placeholder="Escribe el contenido aquí..." style="min-height:90px"></textarea>
+    </div>
+    <div id="file-drop-wrap">
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+        <input type="file" id="file-input" onchange="handleFile(this.files[0])">
+        <div class="drop-icon" id="dz-icon">🎬</div>
+        <div class="drop-text" id="dz-text">Arrastra tu video aquí o haz clic para subir</div>
+        <div class="drop-sub" id="dz-sub">Se subirá directamente a tu Google Drive</div>
+      </div>
+    </div>
+    <div id="file-preview-wrap" style="display:none;margin-bottom:12px">
+      <div class="file-preview">
+        <div class="file-icon" id="fp-icon">🎬</div>
+        <div class="file-info"><div class="file-name" id="fp-name"></div><div class="file-size" id="fp-size"></div></div>
+        <button class="file-remove" onclick="removeFile()">✕</button>
+      </div>
+      <div id="upload-prog" style="display:none" class="prog-upload">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:8px">
+          <span id="up-status">Subiendo a Google Drive...</span>
+          <span id="up-pct">0%</span>
+        </div>
+        <div class="prog-upload-bar"><div class="prog-upload-fill" id="up-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+      <button class="btn" onclick="closeModal('upload-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCourse()">Guardar en Drive</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal agregar operador -->
+<div class="modal-overlay" id="addop-modal">
+  <div class="modal">
+    <div class="modal-title">Agregar operador <button class="modal-close" onclick="closeModal('addop-modal')">✕</button></div>
+    <div class="form-row">
+      <div class="field"><label>Nombre *</label><input type="text" id="op-fn" placeholder="Nombre"></div>
+      <div class="field"><label>Apellido *</label><input type="text" id="op-ln" placeholder="Apellido"></div>
+    </div>
+    <div class="field"><label>Correo corporativo</label><input type="text" id="op-email" placeholder="operador@comvenc.com"></div>
+    <div class="field"><label>Área / Turno</label><input type="text" id="op-area" placeholder="Ej. Producción — Turno A"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+      <button class="btn" onclick="closeModal('addop-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="addOperator()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+const CLIENT_ID='365551766533-f3nq62355nedak9ugd7ab44pmep1c90k.apps.googleusercontent.com';
+const SCOPES='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets profile email';
+const FOLDER_NAME='CapacitaOp';
+const SHEET_NAME='Progreso_CapacitaOp';
+
+let gToken=null,gUser=null,folderId=null,sheetId=null,currentView='admin',opFilter='all';
+let courses=[],operators=[],progress={},selectedFile=null,selectedMedia='vid';
+
+function notify(msg,err=false){
+  const n=document.getElementById('notif');
+  n.textContent=msg;n.className='notif show'+(err?' err':'');
+  clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('show'),3500);
+}
+
+function signIn(){
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID,scope:SCOPES,
+    callback:async(r)=>{
+      if(r.error){notify('Error al iniciar sesión: '+r.error,true);return;}
+      gToken=r.access_token;
+      await fetchUserInfo();
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('main-app').style.display='flex';
+      document.getElementById('main-app').style.flexDirection='column';
+      await initDrive();
+    }
+  });
+  client.requestAccessToken();
+}
+
+async function fetchUserInfo(){
+  const r=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+gToken}});
+  gUser=await r.json();
+  const ini=(gUser.given_name?.[0]||'')+(gUser.family_name?.[0]||'');
+  document.getElementById('top-initials').textContent=ini||'OP';
+  document.getElementById('top-name').textContent=gUser.name||gUser.email||'';
+  if(gUser.picture){document.getElementById('top-avatar').innerHTML=`<img src="${gUser.picture}" alt="">`;}
+}
+
+function signOut(){
+  google.accounts.oauth2.revoke(gToken,()=>{});
+  gToken=null;gUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+}
+
+async function apiReq(url,opts={}){
+  const headers={Authorization:'Bearer '+gToken,...(opts.headers||{})};
+  if(!opts.body||typeof opts.body==='string')headers['Content-Type']='application/json';
+  const r=await fetch(url,{...opts,headers});
+  if(!r.ok){const e=await r.text();throw new Error(e);}
+  if(r.status===204)return{};
+  return r.json();
+}
+
+async function initDrive(){
+  setDriveStatus('loading','Conectando con Google Drive...');
+  try{
+    await ensureFolder();
+    await ensureSheet();
+    await loadCourses();
+    await loadProgress();
+  }catch(e){
+    setDriveStatus('err','Error al conectar: '+e.message);
+    notify('Error de conexión con Drive',true);
+  }
+}
+
+async function ensureFolder(){
+  const q=`name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+  const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if(r.files&&r.files.length){folderId=r.files[0].id;}
+  else{
+    const c=await apiReq('https://www.googleapis.com/drive/v3/files',{method:'POST',body:JSON.stringify({name:FOLDER_NAME,mimeType:'application/vnd.google-apps.folder'})});
+    folderId=c.id;
+  }
+}
+
+async function ensureSheet(){
+  const q=`name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
+  const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if(r.files&&r.files.length){sheetId=r.files[0].id;}
+  else{
+    const c=await apiReq('https://www.googleapis.com/spreadsheets/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:SHEET_NAME},sheets:[{properties:{title:'Progreso'}},{properties:{title:'Operadores'}},{properties:{title:'Cursos'}}]})});
+    sheetId=c.spreadsheetId;
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Operador','Email','Curso','Completado','Fecha']]})});
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Nombre','Email','Area','Fecha_Alta']]})});
+  }
+  const lnk=document.getElementById('sheets-link');
+  lnk.href=`https://docs.google.com/spreadsheets/d/${sheetId}`;
+  lnk.style.display='inline-flex';
+}
+
+async function loadCourses(){
+  try{
+    const q=`'${folderId}' in parents and trashed=false`;
+    const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name,mimeType,description,createdTime)&orderBy=createdTime desc`);
+    const thumbs=['thumb-blue','thumb-teal','thumb-amber','thumb-coral','thumb-purple'];
+    courses=(r.files||[]).map(f=>({
+      id:f.id,name:f.name.replace(/\.[^.]+$/,''),mime:f.mimeType,desc:f.description||'',
+      type:getMType(f.mimeType),thumb:thumbs[Math.abs(hsh(f.id))%5],icon:getMIcon(f.mimeType),
+      viewUrl:`https://drive.google.com/file/d/${f.id}/view`
+    }));
+    renderAdminCourses();updateStats();
+    setDriveStatus('ok','Conectado · '+courses.length+' archivo'+(courses.length!==1?'s':'')+' en Drive');
+  }catch(e){setDriveStatus('err','Error cargando archivos');}
+}
+
+function hsh(s){let h=0;for(let c of s)h=(h<<5)-h+c.charCodeAt(0)|0;return h;}
+function getMType(m){if(!m)return'txt';if(m.startsWith('video'))return'vid';if(m.startsWith('image'))return'img';if(m.startsWith('audio'))return'aud';return'txt';}
+function getMIcon(m){if(!m)return'📝';if(m.startsWith('video'))return'🎬';if(m.startsWith('image'))return'🖼';if(m.startsWith('audio'))return'🎵';if(m.includes('pdf'))return'📄';return'📝';}
+
+async function loadProgress(){
+  try{
+    const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A2:E`);
+    progress={};
+    (r.values||[]).forEach(row=>{
+      const [op,,course,,done]=row;
+      if(!progress[op])progress[op]={};
+      if(course)progress[op][course]=done==='TRUE';
+    });
+    const ro=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A2:D`);
+    const avcs=['av-b','av-t','av-a','av-c'];
+    const shOps=(ro.values||[]).map((r,i)=>({id:r[1]||r[0],name:r[0],area:r[2]||'',email:r[1]||'',av:getIni(r[0]),avc:avcs[i%4]}));
+    if(shOps.length)operators=shOps;
+    renderAdminOps();renderCompletionReport();updateStats();renderOpCourses();
+  }catch(e){console.warn('Progress:',e);}
+}
+
+function getIni(n){return(n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();}
+
+async function saveProgress(opId,courseId,done){
+  try{
+    const op=operators.find(o=>o.id===opId);
+    const course=courses.find(c=>c.id===courseId);
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A1:append?valueInputOption=RAW`,{
+      method:'POST',body:JSON.stringify({values:[[op?.name||opId,op?.email||'',course?.name||courseId,done?'TRUE':'FALSE',new Date().toLocaleString('es-MX')]]})
+    });
+  }catch(e){console.warn(e);}
+}
+
+function setDriveStatus(type,msg){
+  const el=document.getElementById('drive-status');
+  el.className='drive-status '+{ok:'drive-ok',err:'drive-err',loading:'drive-loading'}[type];
+  document.getElementById('drive-status-txt').textContent=msg;
+}
+
+function avStyle(avc){
+  const map={'av-b':'background:#B5D4F4;color:#0C447C','av-t':'background:#9FE1CB;color:#085041','av-a':'background:#FAC775;color:#633806','av-c':'background:#F5C4B3;color:#712B13'};
+  return map[avc]||map['av-b'];
+}
+
+function renderAdminCourses(){
+  const el=document.getElementById('admin-courses');
+  if(!courses.length){el.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:#888">No hay cursos. Sube el primero con "+ Nuevo curso"</div>';return;}
+  el.innerHTML=courses.map(c=>`
+    <div class="course-item">
+      <div class="course-thumb ${c.thumb}">${c.icon}</div>
+      <div class="course-info">
+        <div class="course-name">${c.name}</div>
+        <div class="course-tags"><span class="tag tag-${c.type}">${{vid:'Video',img:'Imagen',aud:'Audio',txt:'Documento'}[c.type]}</span></div>
+      </div>
+      <a href="${c.viewUrl}" target="_blank" class="btn btn-sm" style="margin-right:5px;text-decoration:none">Ver</a>
+      <button class="btn btn-sm btn-danger" onclick="deleteCourse('${c.id}')">✕</button>
+    </div>`).join('');
+}
+
+function opPct(opId){
+  if(!courses.length)return 0;
+  return Math.round(courses.filter(c=>progress[opId]&&progress[opId][c.id]).length/courses.length*100);
+}
+
+function renderAdminOps(){
+  const el=document.getElementById('admin-ops');
+  if(!operators.length){el.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:#888">Sin operadores. Agrega con "+ Agregar"</div>';return;}
+  el.innerHTML=operators.map(op=>{
+    const p=opPct(op.id);
+    const fc=p>=80?'fill-green':(p<50?'fill-red':'fill-amber');
+    return`<div class="op-row">
+      <div class="op-av" style="${avStyle(op.avc)}">${op.av}</div>
+      <div class="op-info"><div class="op-name">${op.name}</div><div class="op-meta">${op.area}</div></div>
+      <span class="prog-bar"><span class="prog-fill ${fc}" style="width:${p}%"></span></span>
+      <span class="pct-txt">${p}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderCompletionReport(){
+  const el=document.getElementById('completion-report');
+  if(!operators.length||!courses.length){el.innerHTML='<div style="font-size:13px;color:#888;padding:10px 0">Agrega operadores y cursos para ver el reporte</div>';return;}
+  el.innerHTML=`<div class="completion-wrap"><table class="completion-table">
+    <thead><tr>
+      <th>Operador</th>
+      ${courses.map(c=>`<th class="center" style="max-width:80px">${c.name.substring(0,10)}${c.name.length>10?'…':''}</th>`).join('')}
+      <th class="center">Total</th>
+    </tr></thead>
+    <tbody>${operators.map(op=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div style="width:22px;height:22px;border-radius:50%;${avStyle(op.avc)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${op.av}</div>
+        ${op.name}
+      </div></td>
+      ${courses.map(c=>`<td class="center"><span class="badge ${progress[op.id]&&progress[op.id][c.id]?'badge-done':'badge-none'}">${progress[op.id]&&progress[op.id][c.id]?'✓':'—'}</span></td>`).join('')}
+      <td class="center"><span class="badge badge-pend">${opPct(op.id)}%</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function updateStats(){
+  document.getElementById('st-ops').textContent=operators.length;
+  document.getElementById('st-cur').textContent=courses.length;
+  let done=0,pend=0;
+  operators.forEach(op=>courses.forEach(c=>{if(progress[op.id]&&progress[op.id][c.id])done++;else pend++;}));
+  document.getElementById('st-done').textContent=done;
+  document.getElementById('st-pend').textContent=pend;
+}
+
+function renderOpCourses(){
+  const opId=gUser?.email||operators[0]?.id;
+  let list=courses;
+  if(opFilter==='done')list=courses.filter(c=>progress[opId]&&progress[opId][c.id]);
+  if(opFilter==='pend')list=courses.filter(c=>!progress[opId]||!progress[opId][c.id]);
+  const done=courses.filter(c=>progress[opId]&&progress[opId][c.id]).length;
+  const pend=courses.length-done;
+  const pct=courses.length?Math.round(done/courses.length*100):0;
+  document.getElementById('op-done-c').textContent=done;
+  document.getElementById('op-pend-c').textContent=pend;
+  document.getElementById('op-pct-c').textContent=pct+'%';
+  const el=document.getElementById('op-courses');
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:32px;font-size:14px;color:#888">No hay cursos en esta categoría</div>';return;}
+  el.innerHTML=list.map(c=>{
+    const isDone=progress[opId]&&progress[opId][c.id];
+    return`<div class="op-course-card ${isDone?'done':''}" onclick="toggleOpCard('${c.id}')">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div class="course-thumb ${c.thumb}" style="width:46px;height:40px;font-size:22px;flex-shrink:0">${c.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600;margin-bottom:3px">${c.name}</div>
+          ${c.desc?`<div style="font-size:12px;color:#888;margin-bottom:6px">${c.desc}</div>`:''}
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="badge ${isDone?'badge-done':'badge-none'}">${isDone?'Completado':'Pendiente'}</span>
+            <span class="tag tag-${c.type}">${{vid:'Video',img:'Imagen',aud:'Audio',txt:'Documento'}[c.type]}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-list" id="ll-${c.id}">
+        <div style="height:1px;background:#f0f0ee;margin:10px 0"></div>
+        <div class="lesson-item" onclick="event.stopPropagation()">
+          <div class="lesson-chk ${isDone?'done':''}">${isDone?'✓':''}</div>
+          <span style="font-size:13px;flex:1">${c.name}</span>
+          <a href="${c.viewUrl}" target="_blank" onclick="event.stopPropagation()" style="font-size:12px;color:#185FA5;text-decoration:none;padding:3px 10px;border-radius:6px;border:1px solid #B5D4F4;background:#E6F1FB;font-weight:500;white-space:nowrap">Abrir en Drive</a>
+        </div>
+        <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;font-size:13px" onclick="event.stopPropagation();toggleComplete('${opId}','${c.id}')">
+          ${isDone?'Marcar como pendiente':'Marcar como completado ✓'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleOpCard(cid){
+  const ll=document.getElementById('ll-'+cid);
+  if(ll){ll.classList.toggle('open');ll.style.display=ll.classList.contains('open')?'block':'none';}
+}
+
+async function toggleComplete(opId,courseId){
+  if(!progress[opId])progress[opId]={};
+  progress[opId][courseId]=!progress[opId][courseId];
+  renderOpCourses();renderAdminOps();renderCompletionReport();updateStats();
+  await saveProgress(opId,courseId,progress[opId][courseId]);
+  notify(progress[opId][courseId]?'Marcado como completado ✓':'Marcado como pendiente');
+  setTimeout(()=>{const ll=document.getElementById('ll-'+courseId);if(ll){ll.classList.add('open');ll.style.display='block';}},60);
+}
+
+function selMedia(t){
+  selectedMedia=t;
+  ['vid','img','aud','txt'].forEach(m=>document.getElementById('mt-'+m).classList.remove('sel'));
+  document.getElementById('mt-'+t).classList.add('sel');
+  const map={vid:['🎬','Arrastra el video o haz clic','MP4, AVI, MOV — máx. 1 GB'],img:['🖼','Arrastra la imagen o haz clic','JPG, PNG, WebP, GIF'],aud:['🎵','Arrastra el audio o haz clic','MP3, WAV, M4A'],txt:['📄','Arrastra el documento o haz clic','PDF, DOCX, TXT']};
+  const[ic,tx,sb]=map[t];
+  document.getElementById('dz-icon').textContent=ic;
+  document.getElementById('dz-text').textContent=tx;
+  document.getElementById('dz-sub').textContent=sb;
+  document.getElementById('txt-area-wrap').style.display=t==='txt'?'flex':'none';
+  document.getElementById('file-drop-wrap').style.display='block';
+}
+
+function handleDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)handleFile(f);}
+function handleFile(f){
+  if(!f)return;selectedFile=f;
+  document.getElementById('drop-zone').style.display='none';
+  document.getElementById('file-preview-wrap').style.display='block';
+  document.getElementById('fp-icon').textContent={vid:'🎬',img:'🖼',aud:'🎵',txt:'📄'}[selectedMedia]||'📄';
+  document.getElementById('fp-name').textContent=f.name;
+  document.getElementById('fp-size').textContent=fmtSize(f.size);
+}
+function removeFile(){
+  selectedFile=null;
+  document.getElementById('drop-zone').style.display='block';
+  document.getElementById('file-preview-wrap').style.display='none';
+  document.getElementById('upload-prog').style.display='none';
+  document.getElementById('file-input').value='';
+}
+function fmtSize(b){if(b>1e9)return(b/1e9).toFixed(1)+' GB';if(b>1e6)return(b/1e6).toFixed(1)+' MB';return Math.round(b/1e3)+' KB';}
+
+async function uploadToDrive(file,name){
+  return new Promise((res,rej)=>{
+    const meta={name,parents:[folderId]};
+    const form=new FormData();
+    form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+    form.append('file',file);
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST','https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink');
+    xhr.setRequestHeader('Authorization','Bearer '+gToken);
+    xhr.upload.onprogress=e=>{if(e.lengthComputable){const p=Math.round(e.loaded/e.total*100);document.getElementById('up-bar').style.width=p+'%';document.getElementById('up-pct').textContent=p+'%';}};
+    xhr.onload=()=>{if(xhr.status===200)res(JSON.parse(xhr.responseText));else rej(new Error(xhr.responseText));};
+    xhr.onerror=()=>rej(new Error('Upload failed'));
+    xhr.send(form);
+  });
+}
+
+async function saveCourse(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){notify('Ingresa el nombre del curso',true);return;}
+  if(selectedMedia==='txt'){
+    const msg=document.getElementById('f-message').value.trim();
+    if(msg){selectedFile=new File([new Blob([msg],{type:'text/plain'})],name+'.txt',{type:'text/plain'});}
+  }
+  if(!selectedFile){notify('Selecciona un archivo para subir',true);return;}
+  document.getElementById('upload-prog').style.display='block';
+  document.getElementById('up-status').textContent='Subiendo a Google Drive...';
+  try{
+    const ext=selectedFile.name.includes('.')?'.'+selectedFile.name.split('.').pop():'';
+    const result=await uploadToDrive(selectedFile,name+ext);
+    closeModal('upload-modal');
+    await loadCourses();
+    notify('Curso "'+name+'" subido a Drive');
+    selectedFile=null;
+    ['f-name','f-desc','f-message'].forEach(id=>document.getElementById(id).value='');
+    removeFile();
+  }catch(e){notify('Error al subir: '+e.message,true);document.getElementById('up-status').textContent='Error';}
+}
+
+async function deleteCourse(id){
+  if(!confirm('¿Eliminar este curso de Google Drive?'))return;
+  try{await apiReq(`https://www.googleapis.com/drive/v3/files/${id}`,{method:'DELETE',headers:{'Content-Type':''}});await loadCourses();notify('Curso eliminado');}
+  catch(e){notify('Error al eliminar',true);}
+}
+
+function openUpload(){
+  const s=document.getElementById('f-assign');
+  s.innerHTML='<option value="all">Todos los operadores</option>'+operators.map(o=>`<option value="${o.id}">${o.name}</option>`).join('');
+  document.getElementById('upload-modal').classList.add('open');
+}
+function openAddOp(){document.getElementById('addop-modal').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+async function addOperator(){
+  const fn=document.getElementById('op-fn').value.trim();
+  const ln=document.getElementById('op-ln').value.trim();
+  if(!fn||!ln){notify('Ingresa nombre y apellido',true);return;}
+  const name=fn+' '+ln,email=document.getElementById('op-email').value.trim(),area=document.getElementById('op-area').value.trim();
+  const avcs=['av-b','av-t','av-a','av-c'];
+  operators.push({id:email||name,name,area,email,av:getIni(name),avc:avcs[operators.length%4]});
+  try{await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[[name,email,area,new Date().toLocaleString('es-MX')]]})});}
+  catch(e){console.warn(e);}
+  closeModal('addop-modal');renderAdminOps();renderCompletionReport();updateStats();notify('Operador '+name+' agregado');
+  ['op-fn','op-ln','op-email','op-area'].forEach(id=>document.getElementById(id).value='');
+}
+
+function setView(v){
+  currentView=v;
+  document.getElementById('tab-admin').classList.toggle('active',v==='admin');
+  document.getElementById('tab-operator').classList.toggle('active',v==='operator');
+  document.getElementById('sec-admin').classList.toggle('visible',v==='admin');
+  document.getElementById('sec-operator').classList.toggle('visible',v==='operator');
+  if(v==='operator')renderOpCourses();
+}
+
+function filterOp(f){
+  opFilter=f;
+  ['all','pend','done'].forEach(x=>{const b=document.getElementById('f-'+x);if(b)b.classList.toggle('active',x===f);});
+  renderOpCourses();
+}
+</script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+</body>
+</html>
