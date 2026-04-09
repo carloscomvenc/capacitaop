@@ -47,6 +47,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .btn-sm{padding:5px 11px;font-size:12px}
 .btn-danger{background:#A32D2D;color:#fff;border-color:#A32D2D}
 .btn-danger:hover{background:#791F1F}
+.btn-warn{background:#854F0B;color:#fff;border-color:#854F0B}
 
 .course-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0ee}
 .course-item:last-child{border-bottom:none}
@@ -58,9 +59,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tag{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500}
 .tag-vid{background:#B5D4F4;color:#0C447C}.tag-img{background:#9FE1CB;color:#085041}.tag-aud{background:#FAC775;color:#633806}.tag-txt{background:#CECBF6;color:#3C3489}
 
-.op-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0ee;cursor:pointer;border-radius:8px;transition:background 0.15s}
+.op-row{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid #f0f0ee;border-radius:8px;transition:background 0.15s}
 .op-row:last-child{border-bottom:none}
-.op-row:hover{background:#f5f5f5;padding-left:8px;padding-right:8px}
+.op-row:hover{background:#f5f5f5}
 .op-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
 .op-info{flex:1;min-width:0}
 .op-name{font-size:13px;font-weight:500}
@@ -72,6 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 
 .badge{font-size:11px;padding:3px 8px;border-radius:8px;font-weight:500;white-space:nowrap}
 .badge-done{background:#C0DD97;color:#27500A}.badge-pend{background:#FAC775;color:#633806}.badge-none{background:#e5e5e5;color:#555}
+.badge-admin{background:#CECBF6;color:#3C3489}
 
 .drive-status{display:flex;align-items:center;gap:6px;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:12px}
 .drive-ok{background:#EAF3DE;color:#27500A}.drive-err{background:#FCEBEB;color:#791F1F}.drive-loading{background:#E6F1FB;color:#185FA5}
@@ -110,11 +112,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .op-course-card{background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s}
 .op-course-card:hover{border-color:#378ADD}
 .op-course-card.done{border-left:4px solid #1D9E75;padding-left:11px}
-.op-course-card.inprog{border-left:4px solid #BA7517;padding-left:11px}
 .lesson-list{margin-top:10px;display:none}
 .lesson-list.open{display:block}
-.lesson-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px;background:#f5f5f5;cursor:pointer;flex-wrap:wrap}
-.lesson-item:hover{background:#eee}
+.lesson-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px;background:#f5f5f5;flex-wrap:wrap}
 .lesson-chk{width:18px;height:18px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700}
 .lesson-chk.done{background:#1D9E75;border-color:#1D9E75;color:#fff}
 
@@ -136,11 +136,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .notif.show{display:block}
 .notif.err{background:#A32D2D}
 
+.admin-list-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #f0f0ee;border-radius:8px}
+.admin-list-item:last-child{border-bottom:none}
+.admin-list-item:hover{background:#f5f5f5}
+
 .completion-wrap{overflow-x:auto}
 .completion-table{width:100%;font-size:12px;border-collapse:collapse;min-width:300px}
 .completion-table th{text-align:left;padding:6px 8px;color:#888;font-weight:500;border-bottom:1px solid #e5e5e5}
 .completion-table th.center{text-align:center}
-.completion-table td{padding:7px 8px;border-bottom:1px solid #f0f0ee}
+.completion-table td{padding:7px 8px;border-bottom:1px solid #f0f0ee;vertical-align:middle}
 .completion-table td.center{text-align:center}
 </style>
 </head>
@@ -149,30 +153,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 <div id="login-screen" class="login-screen">
   <div class="login-card">
     <div class="login-logo">CapacitaOp</div>
-    <div class="login-sub">Plataforma de capacitación para operadores de <strong>comvenc.com</strong></div>
+    <div class="login-sub">Plataforma de capacitación para operadores</div>
     <button class="google-btn" onclick="signIn()">
       <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Entrar con Google (@comvenc.com)
+      Entrar con Google
     </button>
-    <div class="login-footer">Los archivos se guardan en tu Google Drive corporativo</div>
+    <div class="login-footer">Puedes entrar con cualquier cuenta de Google</div>
   </div>
 </div>
 
 <div class="app" id="main-app" style="display:none">
   <div class="topbar">
     <div class="logo">CapacitaOp</div>
-    <div class="tabs">
+    <div class="tabs" id="role-tabs" style="display:none">
       <button class="tab-btn active" id="tab-admin" onclick="setView('admin')">Admin</button>
       <button class="tab-btn" id="tab-operator" onclick="setView('operator')">Operador</button>
     </div>
     <div class="user-info">
       <div class="avatar" id="top-avatar"><span id="top-initials">--</span></div>
-      <span id="top-name" style="font-size:13px;color:#666;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <span id="top-name" style="font-size:13px;color:#666;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <span id="top-role-badge" class="badge" style="display:none"></span>
       <button class="btn btn-sm" onclick="signOut()">Salir</button>
     </div>
   </div>
 
   <div class="content">
+    <!-- ADMIN -->
     <div class="section visible" id="sec-admin">
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Operadores</div><div class="stat-value s-blue" id="st-ops">0</div></div>
@@ -195,10 +201,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <div class="card">
           <div class="card-title">
             <span>Progreso operadores</span>
-            <button class="btn btn-sm" onclick="openAddOp()">+ Agregar</button>
           </div>
           <div id="admin-ops"></div>
         </div>
+      </div>
+      <div style="margin-top:16px" class="card">
+        <div class="card-title">
+          <span>Administradores</span>
+          <button class="btn btn-sm btn-primary" onclick="openAddAdmin()">+ Agregar admin</button>
+        </div>
+        <div id="admin-list"></div>
       </div>
       <div style="margin-top:16px" class="card">
         <div class="card-title">
@@ -212,6 +224,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       </div>
     </div>
 
+    <!-- OPERADOR -->
     <div class="section" id="sec-operator">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
         <div style="font-size:16px;font-weight:600">Mis capacitaciones</div>
@@ -259,7 +272,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <input type="file" id="file-input" onchange="handleFile(this.files[0])">
         <div class="drop-icon" id="dz-icon">🎬</div>
         <div class="drop-text" id="dz-text">Arrastra tu video aquí o haz clic para subir</div>
-        <div class="drop-sub" id="dz-sub">Se subirá directamente a tu Google Drive</div>
+        <div class="drop-sub">Se subirá directamente a tu Google Drive</div>
       </div>
     </div>
     <div id="file-preview-wrap" style="display:none;margin-bottom:12px">
@@ -270,8 +283,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       </div>
       <div id="upload-prog" style="display:none" class="prog-upload">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:8px">
-          <span id="up-status">Subiendo a Google Drive...</span>
-          <span id="up-pct">0%</span>
+          <span id="up-status">Subiendo a Google Drive...</span><span id="up-pct">0%</span>
         </div>
         <div class="prog-upload-bar"><div class="prog-upload-fill" id="up-bar" style="width:0%"></div></div>
       </div>
@@ -283,19 +295,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
 </div>
 
-<!-- Modal agregar operador -->
-<div class="modal-overlay" id="addop-modal">
+<!-- Modal agregar admin -->
+<div class="modal-overlay" id="addadmin-modal">
   <div class="modal">
-    <div class="modal-title">Agregar operador <button class="modal-close" onclick="closeModal('addop-modal')">✕</button></div>
-    <div class="form-row">
-      <div class="field"><label>Nombre *</label><input type="text" id="op-fn" placeholder="Nombre"></div>
-      <div class="field"><label>Apellido *</label><input type="text" id="op-ln" placeholder="Apellido"></div>
+    <div class="modal-title">Agregar administrador <button class="modal-close" onclick="closeModal('addadmin-modal')">✕</button></div>
+    <div style="font-size:13px;color:#666;margin-bottom:16px;background:#E6F1FB;padding:10px 12px;border-radius:8px;">
+      El correo que agregues podrá ver el panel Admin y subir cursos.
     </div>
-    <div class="field"><label>Correo corporativo</label><input type="text" id="op-email" placeholder="operador@comvenc.com"></div>
-    <div class="field"><label>Área / Turno</label><input type="text" id="op-area" placeholder="Ej. Producción — Turno A"></div>
+    <div class="field"><label>Correo de Google *</label><input type="email" id="admin-email-input" placeholder="capacitador@gmail.com"></div>
+    <div class="field"><label>Nombre (opcional)</label><input type="text" id="admin-name-input" placeholder="Ej. Juan Capacitador"></div>
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
-      <button class="btn" onclick="closeModal('addop-modal')">Cancelar</button>
-      <button class="btn btn-primary" onclick="addOperator()">Agregar</button>
+      <button class="btn" onclick="closeModal('addadmin-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAdmin()">Agregar admin</button>
     </div>
   </div>
 </div>
@@ -308,8 +319,9 @@ const SCOPES='https://www.googleapis.com/auth/drive.file https://www.googleapis.
 const FOLDER_NAME='CapacitaOp';
 const SHEET_NAME='Progreso_CapacitaOp';
 
-let gToken=null,gUser=null,folderId=null,sheetId=null,currentView='admin',opFilter='all';
-let courses=[],operators=[],progress={},selectedFile=null,selectedMedia='vid';
+let gToken=null,gUser=null,folderId=null,sheetId=null,currentView='operator',opFilter='all';
+let courses=[],operators=[],progress={},admins=[],selectedFile=null,selectedMedia='vid';
+let isAdmin=false;
 
 function notify(msg,err=false){
   const n=document.getElementById('notif');
@@ -344,7 +356,7 @@ async function fetchUserInfo(){
 
 function signOut(){
   google.accounts.oauth2.revoke(gToken,()=>{});
-  gToken=null;gUser=null;
+  gToken=null;gUser=null;isAdmin=false;
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('main-app').style.display='none';
 }
@@ -359,15 +371,71 @@ async function apiReq(url,opts={}){
 }
 
 async function initDrive(){
-  setDriveStatus('loading','Conectando con Google Drive...');
+  setDriveStatus('loading','Conectando...');
   try{
     await ensureFolder();
     await ensureSheet();
+    await loadAdmins();
+    checkRole();
     await loadCourses();
     await loadProgress();
+    await autoRegisterOperator();
   }catch(e){
-    setDriveStatus('err','Error al conectar: '+e.message);
-    notify('Error de conexión con Drive',true);
+    setDriveStatus('err','Error: '+e.message);
+    notify('Error de conexión',true);
+  }
+}
+
+function checkRole(){
+  const email=gUser?.email||'';
+  isAdmin=admins.some(a=>a.email.toLowerCase()===email.toLowerCase());
+  const badge=document.getElementById('top-role-badge');
+  const tabs=document.getElementById('role-tabs');
+  if(isAdmin){
+    badge.textContent='Admin';badge.className='badge badge-admin';badge.style.display='inline-block';
+    tabs.style.display='flex';
+    setView('admin');
+  } else {
+    badge.textContent='Operador';badge.className='badge badge-none';badge.style.display='inline-block';
+    tabs.style.display='none';
+    setView('operator');
+  }
+}
+
+async function loadAdmins(){
+  try{
+    const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A2:C`);
+    admins=(r.values||[]).map(row=>({email:row[0]||'',name:row[1]||'',since:row[2]||''}));
+  }catch(e){
+    // Si la hoja no existe, crear con el usuario actual como primer admin
+    try{
+      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/batchUpdate`,{
+        method:'POST',body:JSON.stringify({requests:[{addSheet:{properties:{title:'Admins'}}}]})
+      });
+      const email=gUser?.email||'';
+      const name=gUser?.name||'';
+      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A1:append?valueInputOption=RAW`,{
+        method:'POST',body:JSON.stringify({values:[['Email','Nombre','Fecha_Alta'],[email,name,new Date().toLocaleString('es-MX')]]})
+      });
+      admins=[{email,name,since:new Date().toLocaleString('es-MX')}];
+    }catch(e2){admins=[];}
+  }
+}
+
+async function autoRegisterOperator(){
+  if(isAdmin)return;
+  const email=gUser?.email||'';
+  const name=gUser?.name||'';
+  const exists=operators.some(o=>o.email===email||o.id===email);
+  if(!exists){
+    const avcs=['av-b','av-t','av-a','av-c'];
+    operators.push({id:email,name,area:'',email,av:getIni(name),avc:avcs[operators.length%4]});
+    try{
+      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{
+        method:'POST',body:JSON.stringify({values:[[name,email,'',new Date().toLocaleString('es-MX')]]})
+      });
+    }catch(e){console.warn(e);}
+    renderAdminOps();renderCompletionReport();updateStats();
   }
 }
 
@@ -386,10 +454,14 @@ async function ensureSheet(){
   const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
   if(r.files&&r.files.length){sheetId=r.files[0].id;}
   else{
-    const c=await apiReq('https://www.googleapis.com/spreadsheets/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:SHEET_NAME},sheets:[{properties:{title:'Progreso'}},{properties:{title:'Operadores'}},{properties:{title:'Cursos'}}]})});
+    const c=await apiReq('https://www.googleapis.com/spreadsheets/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:SHEET_NAME},sheets:[{properties:{title:'Progreso'}},{properties:{title:'Operadores'}},{properties:{title:'Cursos'}},{properties:{title:'Admins'}}]})});
     sheetId=c.spreadsheetId;
+    const email=gUser?.email||'';
+    const name=gUser?.name||'';
     await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Operador','Email','Curso','Completado','Fecha']]})});
     await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Nombre','Email','Area','Fecha_Alta']]})});
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Email','Nombre','Fecha_Alta'],[email,name,new Date().toLocaleString('es-MX')]]})});
+    admins=[{email,name}];
   }
   const lnk=document.getElementById('sheets-link');
   lnk.href=`https://docs.google.com/spreadsheets/d/${sheetId}`;
@@ -406,7 +478,7 @@ async function loadCourses(){
       type:getMType(f.mimeType),thumb:thumbs[Math.abs(hsh(f.id))%5],icon:getMIcon(f.mimeType),
       viewUrl:`https://drive.google.com/file/d/${f.id}/view`
     }));
-    renderAdminCourses();updateStats();
+    renderAdminCourses();updateStats();renderOpCourses();
     setDriveStatus('ok','Conectado · '+courses.length+' archivo'+(courses.length!==1?'s':'')+' en Drive');
   }catch(e){setDriveStatus('err','Error cargando archivos');}
 }
@@ -420,7 +492,7 @@ async function loadProgress(){
     const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A2:E`);
     progress={};
     (r.values||[]).forEach(row=>{
-      const [op,,course,,done]=row;
+      const[op,,course,,done]=row;
       if(!progress[op])progress[op]={};
       if(course)progress[op][course]=done==='TRUE';
     });
@@ -429,6 +501,7 @@ async function loadProgress(){
     const shOps=(ro.values||[]).map((r,i)=>({id:r[1]||r[0],name:r[0],area:r[2]||'',email:r[1]||'',av:getIni(r[0]),avc:avcs[i%4]}));
     if(shOps.length)operators=shOps;
     renderAdminOps();renderCompletionReport();updateStats();renderOpCourses();
+    renderAdminList();
   }catch(e){console.warn('Progress:',e);}
 }
 
@@ -436,10 +509,10 @@ function getIni(n){return(n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('')
 
 async function saveProgress(opId,courseId,done){
   try{
-    const op=operators.find(o=>o.id===opId);
+    const op=operators.find(o=>o.id===opId)||{name:gUser?.name||opId,email:gUser?.email||''};
     const course=courses.find(c=>c.id===courseId);
     await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A1:append?valueInputOption=RAW`,{
-      method:'POST',body:JSON.stringify({values:[[op?.name||opId,op?.email||'',course?.name||courseId,done?'TRUE':'FALSE',new Date().toLocaleString('es-MX')]]})
+      method:'POST',body:JSON.stringify({values:[[op.name,op.email,course?.name||courseId,done?'TRUE':'FALSE',new Date().toLocaleString('es-MX')]]})
     });
   }catch(e){console.warn(e);}
 }
@@ -449,20 +522,18 @@ function setDriveStatus(type,msg){
   el.className='drive-status '+{ok:'drive-ok',err:'drive-err',loading:'drive-loading'}[type];
   document.getElementById('drive-status-txt').textContent=msg;
 }
-
 function avStyle(avc){
-  const map={'av-b':'background:#B5D4F4;color:#0C447C','av-t':'background:#9FE1CB;color:#085041','av-a':'background:#FAC775;color:#633806','av-c':'background:#F5C4B3;color:#712B13'};
-  return map[avc]||map['av-b'];
+  const m={'av-b':'background:#B5D4F4;color:#0C447C','av-t':'background:#9FE1CB;color:#085041','av-a':'background:#FAC775;color:#633806','av-c':'background:#F5C4B3;color:#712B13'};
+  return m[avc]||m['av-b'];
 }
 
 function renderAdminCourses(){
   const el=document.getElementById('admin-courses');
-  if(!courses.length){el.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:#888">No hay cursos. Sube el primero con "+ Nuevo curso"</div>';return;}
+  if(!courses.length){el.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:#888">No hay cursos aún. Sube el primero.</div>';return;}
   el.innerHTML=courses.map(c=>`
     <div class="course-item">
       <div class="course-thumb ${c.thumb}">${c.icon}</div>
-      <div class="course-info">
-        <div class="course-name">${c.name}</div>
+      <div class="course-info"><div class="course-name">${c.name}</div>
         <div class="course-tags"><span class="tag tag-${c.type}">${{vid:'Video',img:'Imagen',aud:'Audio',txt:'Documento'}[c.type]}</span></div>
       </div>
       <a href="${c.viewUrl}" target="_blank" class="btn btn-sm" style="margin-right:5px;text-decoration:none">Ver</a>
@@ -477,32 +548,47 @@ function opPct(opId){
 
 function renderAdminOps(){
   const el=document.getElementById('admin-ops');
-  if(!operators.length){el.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:#888">Sin operadores. Agrega con "+ Agregar"</div>';return;}
+  if(!operators.length){el.innerHTML='<div style="text-align:center;padding:20px;font-size:13px;color:#888">Los operadores aparecen aquí al registrarse</div>';return;}
   el.innerHTML=operators.map(op=>{
     const p=opPct(op.id);
     const fc=p>=80?'fill-green':(p<50?'fill-red':'fill-amber');
     return`<div class="op-row">
       <div class="op-av" style="${avStyle(op.avc)}">${op.av}</div>
-      <div class="op-info"><div class="op-name">${op.name}</div><div class="op-meta">${op.area}</div></div>
+      <div class="op-info"><div class="op-name">${op.name}</div><div class="op-meta">${op.email}</div></div>
       <span class="prog-bar"><span class="prog-fill ${fc}" style="width:${p}%"></span></span>
       <span class="pct-txt">${p}%</span>
     </div>`;
   }).join('');
 }
 
+function renderAdminList(){
+  const el=document.getElementById('admin-list');
+  if(!admins.length){el.innerHTML='<div style="font-size:13px;color:#888;padding:8px 0">Sin administradores registrados</div>';return;}
+  el.innerHTML=admins.map((a,i)=>`
+    <div class="admin-list-item">
+      <div style="width:32px;height:32px;border-radius:50%;background:#CECBF6;color:#3C3489;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0">${getIni(a.name||a.email)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500">${a.name||'Sin nombre'}</div>
+        <div style="font-size:11px;color:#888">${a.email}</div>
+      </div>
+      <span class="badge badge-admin">Admin</span>
+      ${i>0?`<button class="btn btn-sm btn-danger" style="margin-left:6px" onclick="removeAdmin('${a.email}')">✕</button>`:''}
+    </div>`).join('');
+}
+
 function renderCompletionReport(){
   const el=document.getElementById('completion-report');
-  if(!operators.length||!courses.length){el.innerHTML='<div style="font-size:13px;color:#888;padding:10px 0">Agrega operadores y cursos para ver el reporte</div>';return;}
+  if(!operators.length||!courses.length){el.innerHTML='<div style="font-size:13px;color:#888;padding:10px 0">Agrega cursos y espera que los operadores se registren</div>';return;}
   el.innerHTML=`<div class="completion-wrap"><table class="completion-table">
     <thead><tr>
       <th>Operador</th>
-      ${courses.map(c=>`<th class="center" style="max-width:80px">${c.name.substring(0,10)}${c.name.length>10?'…':''}</th>`).join('')}
-      <th class="center">Total</th>
+      ${courses.map(c=>`<th class="center">${c.name.substring(0,10)}${c.name.length>10?'…':''}</th>`).join('')}
+      <th class="center">%</th>
     </tr></thead>
     <tbody>${operators.map(op=>`<tr>
       <td><div style="display:flex;align-items:center;gap:6px">
         <div style="width:22px;height:22px;border-radius:50%;${avStyle(op.avc)};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${op.av}</div>
-        ${op.name}
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px">${op.name}</span>
       </div></td>
       ${courses.map(c=>`<td class="center"><span class="badge ${progress[op.id]&&progress[op.id][c.id]?'badge-done':'badge-none'}">${progress[op.id]&&progress[op.id][c.id]?'✓':'—'}</span></td>`).join('')}
       <td class="center"><span class="badge badge-pend">${opPct(op.id)}%</span></td>
@@ -520,7 +606,7 @@ function updateStats(){
 }
 
 function renderOpCourses(){
-  const opId=gUser?.email||operators[0]?.id;
+  const opId=gUser?.email||'';
   let list=courses;
   if(opFilter==='done')list=courses.filter(c=>progress[opId]&&progress[opId][c.id]);
   if(opFilter==='pend')list=courses.filter(c=>!progress[opId]||!progress[opId][c.id]);
@@ -548,7 +634,7 @@ function renderOpCourses(){
       </div>
       <div class="lesson-list" id="ll-${c.id}">
         <div style="height:1px;background:#f0f0ee;margin:10px 0"></div>
-        <div class="lesson-item" onclick="event.stopPropagation()">
+        <div class="lesson-item">
           <div class="lesson-chk ${isDone?'done':''}">${isDone?'✓':''}</div>
           <span style="font-size:13px;flex:1">${c.name}</span>
           <a href="${c.viewUrl}" target="_blank" onclick="event.stopPropagation()" style="font-size:12px;color:#185FA5;text-decoration:none;padding:3px 10px;border-radius:6px;border:1px solid #B5D4F4;background:#E6F1FB;font-weight:500;white-space:nowrap">Abrir en Drive</a>
@@ -563,7 +649,7 @@ function renderOpCourses(){
 
 function toggleOpCard(cid){
   const ll=document.getElementById('ll-'+cid);
-  if(ll){ll.classList.toggle('open');ll.style.display=ll.classList.contains('open')?'block':'none';}
+  if(ll){const open=ll.style.display==='block';ll.style.display=open?'none':'block';}
 }
 
 async function toggleComplete(opId,courseId){
@@ -572,18 +658,17 @@ async function toggleComplete(opId,courseId){
   renderOpCourses();renderAdminOps();renderCompletionReport();updateStats();
   await saveProgress(opId,courseId,progress[opId][courseId]);
   notify(progress[opId][courseId]?'Marcado como completado ✓':'Marcado como pendiente');
-  setTimeout(()=>{const ll=document.getElementById('ll-'+courseId);if(ll){ll.classList.add('open');ll.style.display='block';}},60);
+  setTimeout(()=>{const ll=document.getElementById('ll-'+courseId);if(ll)ll.style.display='block';},60);
 }
 
 function selMedia(t){
   selectedMedia=t;
   ['vid','img','aud','txt'].forEach(m=>document.getElementById('mt-'+m).classList.remove('sel'));
   document.getElementById('mt-'+t).classList.add('sel');
-  const map={vid:['🎬','Arrastra el video o haz clic','MP4, AVI, MOV — máx. 1 GB'],img:['🖼','Arrastra la imagen o haz clic','JPG, PNG, WebP, GIF'],aud:['🎵','Arrastra el audio o haz clic','MP3, WAV, M4A'],txt:['📄','Arrastra el documento o haz clic','PDF, DOCX, TXT']};
-  const[ic,tx,sb]=map[t];
+  const map={vid:['🎬','Arrastra el video o haz clic'],img:['🖼','Arrastra la imagen o haz clic'],aud:['🎵','Arrastra el audio o haz clic'],txt:['📄','Arrastra el documento o haz clic']};
+  const[ic,tx]=map[t];
   document.getElementById('dz-icon').textContent=ic;
   document.getElementById('dz-text').textContent=tx;
-  document.getElementById('dz-sub').textContent=sb;
   document.getElementById('txt-area-wrap').style.display=t==='txt'?'flex':'none';
   document.getElementById('file-drop-wrap').style.display='block';
 }
@@ -641,7 +726,7 @@ async function saveCourse(){
     selectedFile=null;
     ['f-name','f-desc','f-message'].forEach(id=>document.getElementById(id).value='');
     removeFile();
-  }catch(e){notify('Error al subir: '+e.message,true);document.getElementById('up-status').textContent='Error';}
+  }catch(e){notify('Error al subir: '+e.message,true);}
 }
 
 async function deleteCourse(id){
@@ -651,30 +736,40 @@ async function deleteCourse(id){
 }
 
 function openUpload(){
-  const s=document.getElementById('f-assign');
-  s.innerHTML='<option value="all">Todos los operadores</option>'+operators.map(o=>`<option value="${o.id}">${o.name}</option>`).join('');
   document.getElementById('upload-modal').classList.add('open');
 }
-function openAddOp(){document.getElementById('addop-modal').classList.add('open');}
+function openAddAdmin(){document.getElementById('addadmin-modal').classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-async function addOperator(){
-  const fn=document.getElementById('op-fn').value.trim();
-  const ln=document.getElementById('op-ln').value.trim();
-  if(!fn||!ln){notify('Ingresa nombre y apellido',true);return;}
-  const name=fn+' '+ln,email=document.getElementById('op-email').value.trim(),area=document.getElementById('op-area').value.trim();
-  const avcs=['av-b','av-t','av-a','av-c'];
-  operators.push({id:email||name,name,area,email,av:getIni(name),avc:avcs[operators.length%4]});
-  try{await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[[name,email,area,new Date().toLocaleString('es-MX')]]})});}
-  catch(e){console.warn(e);}
-  closeModal('addop-modal');renderAdminOps();renderCompletionReport();updateStats();notify('Operador '+name+' agregado');
-  ['op-fn','op-ln','op-email','op-area'].forEach(id=>document.getElementById(id).value='');
+async function saveAdmin(){
+  const email=document.getElementById('admin-email-input').value.trim().toLowerCase();
+  const name=document.getElementById('admin-name-input').value.trim();
+  if(!email||!email.includes('@')){notify('Ingresa un correo válido',true);return;}
+  if(admins.some(a=>a.email.toLowerCase()===email)){notify('Este correo ya es admin',true);return;}
+  admins.push({email,name,since:new Date().toLocaleString('es-MX')});
+  try{
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A1:append?valueInputOption=RAW`,{
+      method:'POST',body:JSON.stringify({values:[[email,name,new Date().toLocaleString('es-MX')]]})
+    });
+  }catch(e){console.warn(e);}
+  closeModal('addadmin-modal');
+  renderAdminList();
+  notify('Admin '+email+' agregado');
+  document.getElementById('admin-email-input').value='';
+  document.getElementById('admin-name-input').value='';
+}
+
+async function removeAdmin(email){
+  if(admins.length<=1){notify('Debe haber al menos un administrador',true);return;}
+  admins=admins.filter(a=>a.email!==email);
+  renderAdminList();
+  notify('Admin eliminado. Actualiza en Sheets si es necesario.');
 }
 
 function setView(v){
   currentView=v;
-  document.getElementById('tab-admin').classList.toggle('active',v==='admin');
-  document.getElementById('tab-operator').classList.toggle('active',v==='operator');
+  document.getElementById('tab-admin')&&document.getElementById('tab-admin').classList.toggle('active',v==='admin');
+  document.getElementById('tab-operator')&&document.getElementById('tab-operator').classList.toggle('active',v==='operator');
   document.getElementById('sec-admin').classList.toggle('visible',v==='admin');
   document.getElementById('sec-operator').classList.toggle('visible',v==='operator');
   if(v==='operator')renderOpCourses();
