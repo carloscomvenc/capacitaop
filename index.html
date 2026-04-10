@@ -316,10 +316,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 <script>
 const CLIENT_ID='365551766533-f3nq62355nedak9ugd7ab44pmep1c90k.apps.googleusercontent.com';
 const SCOPES='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets profile email';
-const FOLDER_NAME='CapacitaOp';
-const SHEET_NAME='Progreso_CapacitaOp';
+const FOLDER_ID="1k7n0vxMYNx1NHFQqDKRKM9vM9oTguVfJ";
+const SHEET_ID="1pYiUesn5XGwlV4Qp2GzDkGPNOVBTdu2a5NY4iZ3CcEc";
 
-let gToken=null,gUser=null,folderId=null,sheetId=null,currentView='operator',opFilter='all';
+let gToken=null,gUser=null,currentView='operator',opFilter='all';
 let courses=[],operators=[],progress={},admins=[],selectedFile=null,selectedMedia='vid';
 let isAdmin=false;
 
@@ -374,8 +374,8 @@ async function apiReq(url,opts={}){
 async function initDrive(){
   setDriveStatus('loading','Conectando...');
   try{
-    await ensureFolder();
-    await ensureSheet();
+    document.getElementById('sheets-link').href='https://docs.google.com/spreadsheets/d/'+SHEET_ID;
+    document.getElementById('sheets-link').style.display='inline-flex';
     await loadAdmins();
     checkRole();
     await loadCourses();
@@ -405,17 +405,17 @@ function checkRole(){
 
 async function loadAdmins(){
   try{
-    const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A2:C`);
+    const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Admins!A2:C`);
     admins=(r.values||[]).map(row=>({email:row[0]||'',name:row[1]||'',since:row[2]||''}));
   }catch(e){
     // Si la hoja no existe, crear con el usuario actual como primer admin
     try{
-      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/batchUpdate`,{
+      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/batchUpdate`,{
         method:'POST',body:JSON.stringify({requests:[{addSheet:{properties:{title:'Admins'}}}]})
       });
       const email=gUser?.email||'';
       const name=gUser?.name||'';
-      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A1:append?valueInputOption=RAW`,{
+      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Admins!A1:append?valueInputOption=RAW`,{
         method:'POST',body:JSON.stringify({values:[['Email','Nombre','Fecha_Alta'],[email,name,new Date().toLocaleString('es-MX')]]})
       });
       admins=[{email,name,since:new Date().toLocaleString('es-MX')}];
@@ -432,7 +432,7 @@ async function autoRegisterOperator(){
     const avcs=['av-b','av-t','av-a','av-c'];
     operators.push({id:email,name,area:'',email,av:getIni(name),avc:avcs[operators.length%4]});
     try{
-      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{
+      await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Operadores!A1:append?valueInputOption=RAW`,{
         method:'POST',body:JSON.stringify({values:[[name,email,'',new Date().toLocaleString('es-MX')]]})
       });
     }catch(e){console.warn(e);}
@@ -440,38 +440,13 @@ async function autoRegisterOperator(){
   }
 }
 
-async function ensureFolder(){
-  const q=`name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
-  const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
-  if(r.files&&r.files.length){folderId=r.files[0].id;}
-  else{
-    const c=await apiReq('https://www.googleapis.com/drive/v3/files',{method:'POST',body:JSON.stringify({name:FOLDER_NAME,mimeType:'application/vnd.google-apps.folder'})});
-    folderId=c.id;
-  }
-}
 
-async function ensureSheet(){
-  const q=`name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`;
-  const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
-  if(r.files&&r.files.length){sheetId=r.files[0].id;}
-  else{
-    const c=await apiReq('https://www.googleapis.com/spreadsheets/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:SHEET_NAME},sheets:[{properties:{title:'Progreso'}},{properties:{title:'Operadores'}},{properties:{title:'Cursos'}},{properties:{title:'Admins'}}]})});
-    sheetId=c.spreadsheetId;
-    const email=gUser?.email||'';
-    const name=gUser?.name||'';
-    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Operador','Email','Curso','Completado','Fecha']]})});
-    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Nombre','Email','Area','Fecha_Alta']]})});
-    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[['Email','Nombre','Fecha_Alta'],[email,name,new Date().toLocaleString('es-MX')]]})});
-    admins=[{email,name}];
-  }
-  const lnk=document.getElementById('sheets-link');
-  lnk.href=`https://docs.google.com/spreadsheets/d/${sheetId}`;
-  lnk.style.display='inline-flex';
-}
+
+
 
 async function loadCourses(){
   try{
-    const q=`'${folderId}' in parents and trashed=false`;
+    const q=`'${FOLDER_ID}' in parents and trashed=false`;
     const r=await apiReq(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name,mimeType,description,createdTime)&orderBy=createdTime desc`);
     const thumbs=['thumb-blue','thumb-teal','thumb-amber','thumb-coral','thumb-purple'];
     courses=(r.files||[]).map(f=>({
@@ -490,14 +465,14 @@ function getMIcon(m){if(!m)return'📝';if(m.startsWith('video'))return'🎬';if
 
 async function loadProgress(){
   try{
-    const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A2:E`);
+    const r=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Progreso!A2:E`);
     progress={};
     (r.values||[]).forEach(row=>{
       const[op,,course,,done]=row;
       if(!progress[op])progress[op]={};
       if(course)progress[op][course]=done==='TRUE';
     });
-    const ro=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Operadores!A2:D`);
+    const ro=await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Operadores!A2:D`);
     const avcs=['av-b','av-t','av-a','av-c'];
     const shOps=(ro.values||[]).map((r,i)=>({id:r[1]||r[0],name:r[0],area:r[2]||'',email:r[1]||'',av:getIni(r[0]),avc:avcs[i%4]}));
     if(shOps.length)operators=shOps;
@@ -512,7 +487,7 @@ async function saveProgress(opId,courseId,done){
   try{
     const op=operators.find(o=>o.id===opId)||{name:gUser?.name||opId,email:gUser?.email||''};
     const course=courses.find(c=>c.id===courseId);
-    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Progreso!A1:append?valueInputOption=RAW`,{
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Progreso!A1:append?valueInputOption=RAW`,{
       method:'POST',body:JSON.stringify({values:[[op.name,op.email,course?.name||courseId,done?'TRUE':'FALSE',new Date().toLocaleString('es-MX')]]})
     });
   }catch(e){console.warn(e);}
@@ -694,7 +669,7 @@ function fmtSize(b){if(b>1e9)return(b/1e9).toFixed(1)+' GB';if(b>1e6)return(b/1e
 
 async function uploadToDrive(file,name){
   return new Promise((res,rej)=>{
-    const meta={name,parents:[folderId]};
+    const meta={name,parents:[FOLDER_ID]};
     const form=new FormData();
     form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
     form.append('file',file);
@@ -749,7 +724,7 @@ async function saveAdmin(){
   if(admins.some(a=>a.email.toLowerCase()===email)){notify('Este correo ya es admin',true);return;}
   admins.push({email,name,since:new Date().toLocaleString('es-MX')});
   try{
-    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${sheetId}/values/Admins!A1:append?valueInputOption=RAW`,{
+    await apiReq(`https://www.googleapis.com/spreadsheets/v4/spreadsheets/${SHEET_ID}/values/Admins!A1:append?valueInputOption=RAW`,{
       method:'POST',body:JSON.stringify({values:[[email,name,new Date().toLocaleString('es-MX')]]})
     });
   }catch(e){console.warn(e);}
