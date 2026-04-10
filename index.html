@@ -332,6 +332,7 @@ function notify(msg,err=false){
 function signIn(){
   const client=google.accounts.oauth2.initTokenClient({
     client_id:CLIENT_ID,scope:SCOPES,
+    prompt:'select_account',
     callback:async(r)=>{
       if(r.error){notify('Error al iniciar sesión: '+r.error,true);return;}
       gToken=r.access_token;
@@ -342,7 +343,7 @@ function signIn(){
       await initDrive();
     }
   });
-  client.requestAccessToken();
+  client.requestAccessToken({prompt:'select_account'});
 }
 
 async function fetchUserInfo(){
